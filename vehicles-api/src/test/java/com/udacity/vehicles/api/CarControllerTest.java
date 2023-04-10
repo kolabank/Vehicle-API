@@ -148,6 +148,20 @@ public class CarControllerTest {
 
     }
 
+    @Test
+    public void updateCarTest(){
+        Car updatedCar = getCar();
+
+        updatedCar.setCondition(Condition.NEW);
+        updatedCar.setPrice("100.00");
+
+        Car returnedCar = carService.save(updatedCar);
+
+        Assert.assertEquals(Condition.NEW, updatedCar.getCondition());
+        Assert.assertEquals("100.00", updatedCar.getPrice());
+
+    }
+
     /**
      * Creates an example Car object for use in testing.
      * @return an example Car object
