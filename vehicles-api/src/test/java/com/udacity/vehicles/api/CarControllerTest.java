@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,6 +22,10 @@ import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.service.CarService;
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +73,8 @@ public class CarControllerTest {
         given(carService.save(any())).willReturn(car);
         given(carService.findById(any())).willReturn(car);
         given(carService.list()).willReturn(Collections.singletonList(car));
+
+
     }
 
     /**
@@ -96,6 +103,9 @@ public class CarControllerTest {
          *   the whole list of vehicles. This should utilize the car from `getCar()`
          *   below (the vehicle will be the first in the list).
          */
+        List<Car> foundCar = carService.list();
+        Assert.assertEquals(1,foundCar.size());
+        Assert.assertEquals("Impala", foundCar.get(0).getDetails().getModel());
 
     }
 
@@ -109,6 +119,14 @@ public class CarControllerTest {
          * TODO: Add a test to check that the `get` method works by calling
          *   a vehicle by ID. This should utilize the car from `getCar()` below.
          */
+
+        Car car = getCar();
+        car.setId(1L);
+        Car foundCar = carService.findById(1L);
+        Assert.assertNotNull(foundCar);
+        Assert.assertEquals(car.getId(), foundCar.getId());
+        Assert.assertEquals(car.getCondition(), foundCar.getCondition());
+        Assert.assertEquals(car.getDetails().getBody(), foundCar.getDetails().getBody());
     }
 
     /**
@@ -122,6 +140,12 @@ public class CarControllerTest {
          *   when the `delete` method is called from the Car Controller. This
          *   should utilize the car from `getCar()` below.
          */
+        Long id = 1L;
+        Car car = getCar();
+        car.setId(id);
+        carService.delete(1L);
+        verify(carService, times(1)).delete(id);
+
     }
 
     /**
